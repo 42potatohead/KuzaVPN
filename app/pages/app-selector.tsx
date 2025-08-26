@@ -2,11 +2,11 @@ import { useVPN } from '@/lib/vpn-context';
 import { AppInfo } from '@/lib/VPNModule';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const AppSelectorScreen = () => {
-  const { availableApps, selectedApps, toggleAppSelection, isLoading, connectVPN } = useVPN();
+  const { availableApps, selectedApps, toggleAppSelection, isLoading, connectVPN, selectionMode } = useVPN();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredApps = availableApps.filter(app =>
@@ -14,6 +14,7 @@ export const AppSelectorScreen = () => {
   );
 
   const isAppSelected = (app: AppInfo) => {
+    if (selectionMode === 'encrypt-all') return true;
     return selectedApps.some(selectedApp => selectedApp.packageName === app.packageName);
   };
 
@@ -32,17 +33,38 @@ export const AppSelectorScreen = () => {
     return (
       <TouchableOpacity
         style={styles.appItem}
-        onPress={() => toggleAppSelection(item)}
+        onPress={() => {
+          if (selectionMode === 'custom') {
+            toggleAppSelection(item);
+          }
+        }}
       >
         <View style={styles.appInfo}>
-          <View style={styles.appIcon}>
-            <Text style={styles.appIconText}>📱</Text>
-          </View>
+          {item.iconBase64 ? (
+            <View style={styles.appIconContainer}>
+              <Image
+                source={{ uri: `data:image/png;base64,${item.iconBase64}` }}
+                style={styles.appIconImage}
+                resizeMode="cover"
+              />
+            </View>
+          ) : (
+            <View style={styles.appIcon}>
+              <Text style={styles.appIconText}>
+                {item.appName.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+          )}
           <Text style={styles.appName}>{item.appName}</Text>
         </View>
         <Switch
           value={isSelected}
-          onValueChange={() => toggleAppSelection(item)}
+          onValueChange={() => {
+            if (selectionMode === 'custom') {
+              toggleAppSelection(item);
+            }
+          }}
+          disabled={selectionMode === 'encrypt-all'}
           trackColor={{ false: '#767577', true: '#14B8A6' }}
           thumbColor={'#ffffff'}
         />
@@ -61,13 +83,16 @@ export const AppSelectorScreen = () => {
       </View>
 
       <Text style={styles.subtitle}>
-        Choose which apps should use the VPN connection
+        {selectionMode === 'encrypt-all'
+          ? 'All apps will use the VPN connection'
+          : 'Choose which apps should use the VPN connection'
+        }
       </Text>
 
       <FlatList
         data={filteredApps}
         renderItem={renderApp}
-        keyExtractor={(item) => item.packageName || item.bundleId || item.appName}
+        keyExtractor={(item) => item.packageName || item.appName}
         style={styles.appsList}
         showsVerticalScrollIndicator={false}
       />
@@ -78,7 +103,10 @@ export const AppSelectorScreen = () => {
           onPress={handleConnect}
         >
           <Text style={styles.connectButtonText}>
-            Connect VPN ({selectedApps.length} apps)
+            {selectionMode === 'encrypt-all'
+              ? 'Connect VPN (All Apps)'
+              : `Connect VPN (${selectedApps.length} apps)`
+            }
           </Text>
         </TouchableOpacity>
       </View>
@@ -152,8 +180,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 12,
   },
+  appIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    marginRight: 12,
+    overflow: 'hidden',
+  },
+  appIconImage: {
+    width: 40,
+    height: 40,
+  },
   appIconText: {
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
   },
   appName: {
     fontSize: 16,

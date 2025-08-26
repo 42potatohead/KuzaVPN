@@ -7,12 +7,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.naming.Context;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;

@@ -9,6 +9,7 @@ interface VPNContextType {
   bandwidthStats: BandwidthStats | null;
   bandwidthLimit: number;
   vpnConfig: VPNConfig | null;
+  selectionMode: 'encrypt-all' | 'custom';
 
   // Actions
   connectVPN: () => Promise<void>;
@@ -53,14 +54,32 @@ export const VPNProvider = ({ children }: { children: ReactNode }) => {
   const loadAvailableApps = async () => {
     try {
       setIsLoading(true);
+      console.log('🔄 Loading available apps...');
       const apps = await KuzaVPN.getInstalledApps();
+      console.log('📱 Loaded apps:', apps.length, 'apps');
+
+      // Log first few apps to check if icons are present
+      if (apps.length > 0) {
+        console.log('📱 Sample app data:', {
+          appName: apps[0].appName,
+          packageName: apps[0].packageName,
+          hasIcon: !!apps[0].iconBase64,
+          iconLength: apps[0].iconBase64 ? apps[0].iconBase64.length : 0
+        });
+      }
+
       setAvailableApps(apps);
 
-      // Default to some popular apps being selected
-      const defaultSelected = apps.filter(app =>
-        ['Snapchat', 'WhatsApp', 'Instagram', 'TikTok'].includes(app.appName)
-      );
-      setSelectedAppsState(defaultSelected);
+      // If we don't have any selected apps yet, start with some popular ones
+      if (selectedApps.length === 0) {
+        const popularApps = apps.filter(app =>
+          ['chrome', 'firefox', 'instagram', 'whatsapp', 'snapchat', 'tiktok', 'youtube'].some(
+            popular => app.appName.toLowerCase().includes(popular) || app.packageName.toLowerCase().includes(popular)
+          )
+        );
+        console.log('📱 Selected popular apps:', popularApps.length, 'apps');
+        setSelectedAppsState(popularApps.slice(0, 3)); // Start with 3 popular apps
+      }
     } catch (error) {
       console.error('Failed to load apps:', error);
     } finally {
@@ -188,11 +207,12 @@ export const VPNProvider = ({ children }: { children: ReactNode }) => {
 
   const setEncryptAll = () => {
     setSelectionMode('encrypt-all');
-    setSelectedAppsState(availableApps);
+    // Don't automatically select all apps - encrypt all means no app filtering
   };
 
   const setCustomSelection = () => {
     setSelectionMode('custom');
+    // Keep current selected apps for custom mode
   };
 
   const setVPNConfig = (config: VPNConfig) => {
@@ -217,6 +237,7 @@ export const VPNProvider = ({ children }: { children: ReactNode }) => {
       bandwidthStats,
       bandwidthLimit,
       vpnConfig,
+      selectionMode,
       connectVPN,
       disconnectVPN,
       toggleAppSelection,

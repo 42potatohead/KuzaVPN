@@ -1,6 +1,6 @@
 import { useVPN } from '@/lib/vpn-context';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { Image, ImageBackground, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -8,15 +8,33 @@ export default function Home() {
   const {
     vpnStatus,
     selectedApps,
+    availableApps,
     connectVPN,
     disconnectVPN,
     setEncryptAll,
     setCustomSelection,
     bandwidthStats,
-    bandwidthLimit
+    bandwidthLimit,
+    toggleAppSelection,
+    isLoading,
+    selectionMode
   } = useVPN();
 
-  const [isEncryptAll, setIsEncryptAll] = useState(true);
+  // Get apps to display on home page (top 3 most popular or available apps)
+  const getHomePageApps = () => {
+    if (selectionMode === 'encrypt-all') {
+      // Show first 3 available apps when encrypting all
+      return availableApps.slice(0, 3);
+    } else {
+      // Show selected apps, up to 3
+      return selectedApps.slice(0, 3);
+    }
+  };
+
+  // Check if an app is selected (only relevant in custom mode)
+  const isAppSelected = (app: any) => {
+    return selectedApps.some(selectedApp => selectedApp.packageName === app.packageName);
+  };
 
   // Helper function to format bandwidth with unit
   const formatBandwidth = (bytes: number): { value: string, unit: string } => {
@@ -56,12 +74,11 @@ export default function Home() {
   };
 
   const handleEncryptAllToggle = () => {
-    if (isEncryptAll) {
+    if (selectionMode === 'encrypt-all') {
       setCustomSelection();
     } else {
       setEncryptAll();
     }
-    setIsEncryptAll(!isEncryptAll);
   };
 
   const getConnectionButtonText = () => {
@@ -153,12 +170,12 @@ export default function Home() {
           <View className="flex-row">
             <TouchableOpacity
               className={`flex-1 py-3 px-6 rounded-l-[8px] ${
-                isEncryptAll ? 'bg-highlight-darkest' : 'bg-gray-200'
+                selectionMode === 'encrypt-all' ? 'bg-highlight-darkest' : 'bg-gray-200'
               }`}
-              onPress={() => !isEncryptAll && handleEncryptAllToggle()}
+              onPress={() => selectionMode !== 'encrypt-all' && handleEncryptAllToggle()}
             >
               <Text className={`text-center font-semibold ${
-                isEncryptAll ? 'text-white' : 'text-gray-600'
+                selectionMode === 'encrypt-all' ? 'text-white' : 'text-gray-600'
               }`}>
                 Encrypt All
               </Text>
@@ -166,12 +183,12 @@ export default function Home() {
 
             <TouchableOpacity
               className={`flex-1 py-3 px-6 rounded-r-[8px] ${
-                !isEncryptAll ? 'bg-highlight-darkest' : 'bg-highlight-lightest'
+                selectionMode === 'custom' ? 'bg-highlight-darkest' : 'bg-highlight-lightest'
               }`}
-              onPress={() => isEncryptAll && handleEncryptAllToggle()}
+              onPress={() => selectionMode === 'encrypt-all' && handleEncryptAllToggle()}
             >
               <Text className={`text-center font-semibold ${
-                !isEncryptAll ? 'text-white' : 'text-gray-600'
+                selectionMode === 'custom' ? 'text-white' : 'text-gray-600'
               }`}>
                 Custom Selection
               </Text>
@@ -181,24 +198,51 @@ export default function Home() {
 
         {/* App List */}
         <View className="mx-6 mb-6 bg-white rounded-2xl shadow-md overflow-hidden">
-          {/* Popular Apps Preview */}
-          {selectedApps.slice(0, 4).map((app, index) => (
-            <View key={app.packageName || index} className={`flex-row items-center justify-between px-6 py-4 ${index < 3 ? 'border-b border-gray-100' : ''}`}>
-              <View className="flex-row items-center">
-                <View className="w-10 h-10 bg-yellow-400 rounded-lg items-center justify-center mr-3">
-                  <Text className="text-white font-bold text-lg">S</Text>
+          {/* App Preview List */}
+          {getHomePageApps().length > 0 ? (
+            getHomePageApps().map((app, index) => (
+              <View key={app.packageName || index} className={`flex-row items-center justify-between px-6 py-4 ${index < getHomePageApps().length - 1 ? 'border-b border-gray-100' : ''}`}>
+                <View className="flex-row items-center">
+                  {app.iconBase64 ? (
+                    <View className="w-10 h-10 rounded-lg mr-3 overflow-hidden">
+                      <Image
+                        source={{ uri: `data:image/png;base64,${app.iconBase64}` }}
+                        className="w-full h-full"
+                        resizeMode="cover"
+                      />
+                    </View>
+                  ) : (
+                    <View className="w-10 h-10 bg-blue-500 rounded-lg items-center justify-center mr-3">
+                      <Text className="text-white font-bold text-lg">
+                        {app.appName.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                  )}
+                  <Text className="font-medium text-gray-900">{app.appName}</Text>
                 </View>
-                <Text className="font-medium text-gray-900">{app.appName}</Text>
+                <Switch
+                  value={selectionMode === 'encrypt-all' ? true : isAppSelected(app)}
+                  onValueChange={() => {
+                    if (selectionMode === 'custom') {
+                      toggleAppSelection(app);
+                    }
+                  }}
+                  disabled={selectionMode === 'encrypt-all'}
+                  trackColor={{ false: '#D1D5DB', true: '#14B8A6' }}
+                  thumbColor={'#ffffff'}
+                  ios_backgroundColor="#D1D5DB"
+                />
               </View>
-              <Switch
-                value={true}
-                onValueChange={() => {}}
-                trackColor={{ false: '#D1D5DB', true: '#14B8A6' }}
-                thumbColor={'#ffffff'}
-                ios_backgroundColor="#D1D5DB"
-              />
+            ))
+          ) : (
+            <View className="px-6 py-8 items-center">
+              {isLoading ? (
+                <Text className="text-gray-500">Loading apps...</Text>
+              ) : (
+                <Text className="text-gray-500">No apps available</Text>
+              )}
             </View>
-          ))}
+          )}
 
           {/* View All Apps Button */}
           <TouchableOpacity
@@ -209,7 +253,9 @@ export default function Home() {
               <View className="w-10 h-10 bg-highlight-darkest rounded-lg items-center justify-center mr-3">
                 <Image source={require('@/assets/images/app/hamburger-menu.png')} />
               </View>
-              <Text className="font-medium text-gray-900">View All Apps</Text>
+              <Text className="font-medium text-gray-900">
+                {selectionMode === 'encrypt-all' ? 'View All Apps' : `Manage Apps (${selectedApps.length} selected)`}
+              </Text>
             </View>
             <Text className="text-gray-400 text-xl">›</Text>
           </TouchableOpacity>

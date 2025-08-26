@@ -60,6 +60,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
       });
     } catch (error) {
       console.error('Error fetching user:', error);
+      // Don't throw error, just set user to null and continue
       setUser(null);
     } finally {
       setLoading(false);
@@ -87,6 +88,8 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
           setLoading(false);
         }
       } catch (error) {
+        console.log('Auth initialization error (this is normal if no internet):', error);
+        // Don't throw error, just set user to null and continue
         setUser(null);
         setLoading(false);
       }
