@@ -1,0 +1,20 @@
+{
+  "platforms": ["ios", "android"],
+  "ios": {
+    "modules": [
+      {
+        "name": "KuzaVpnModule",
+        "path": "./modules/vpn-module/ios",
+        "podspec": "./modules/vpn-module/ios/KuzaVpnModule.podspec"
+      }
+    ]
+  },
+  "android": {
+    "modules": [
+      {
+        "name": "KuzaVpnModule",
+        "path": "./modules/vpn-module/android"
+      }
+    ]
+  }
+}

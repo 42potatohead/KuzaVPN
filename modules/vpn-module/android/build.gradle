@@ -1,0 +1,63 @@
+apply plugin: 'com.android.library'
+
+// Android library configuration for KuzaVPN native module
+android {
+    compileSdkVersion 34
+    buildToolsVersion "34.0.0"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+    }
+}
+
+dependencies {
+    implementation "com.facebook.react:react-native:+"
+    implementation 'androidx.core:core:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+
+    // WireGuard dependencies
+    implementation 'com.wireguard.android:tunnel:1.0.20230706'
+
+    // JSON processing
+    implementation 'org.json:json:20230618'
+
+    // Network and connectivity
+    implementation 'androidx.work:work-runtime:2.8.1'
+
+    // Testing dependencies
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+// Make sure the module is properly recognized by React Native
+project.ext.react = [
+    entryFile: "index.js",
+    enableHermes: false,
+]
+
+// Auto-linking configuration
+apply from: "../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"; applyNativeModulesAppBuildGradle(project)
