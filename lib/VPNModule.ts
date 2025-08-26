@@ -38,7 +38,7 @@ export interface BandwidthStats {
   lastUpdated: string;
 }
 
-// Get native module with fallback for development  
+// Get native module with fallback for development
 const KuzaVpnNativeModule = NativeModules.KuzaVPN as KuzaVpnNativeModule | undefined;
 
 /**

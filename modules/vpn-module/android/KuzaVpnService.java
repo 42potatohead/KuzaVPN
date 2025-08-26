@@ -198,11 +198,11 @@ public class KuzaVpnService extends VpnService {
         try {
             // Parse JSON config from React Native
             JSONObject json = new JSONObject(configJson);
-            
+
             String privateKey = json.getString("privateKey");
             String publicKey = json.getString("publicKey");
             String serverEndpoint = json.getString("serverEndpoint");
-            
+
             // Use your actual WireGuard configuration
             Interface.Builder interfaceBuilder = new Interface.Builder()
                 .parsePrivateKey(privateKey)

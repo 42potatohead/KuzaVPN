@@ -263,7 +263,7 @@ class KuzaVpnModule: RCTEventEmitter {
 
         // Convert selected apps to domain rules using our mapper
         let domainRules = appDomainMapper.convertAppsToDomainRules(selectedApps)
-        
+
         // Create WireGuard configuration string
         let wireguardConfigString = createWireGuardConfigString(
             privateKey: privateKey,
@@ -302,7 +302,7 @@ class KuzaVpnModule: RCTEventEmitter {
             reject("INVALID_PROTOCOL", "Invalid VPN protocol configuration", nil)
         }
     }
-    
+
     private func createWireGuardConfigString(
         privateKey: String,
         publicKey: String,
@@ -312,7 +312,7 @@ class KuzaVpnModule: RCTEventEmitter {
     ) -> String {
         let allowedIPsString = allowedIPs.joined(separator: ", ")
         let dnsString = dns.joined(separator: ", ")
-        
+
         return """
         [Interface]
         PrivateKey = \(privateKey)

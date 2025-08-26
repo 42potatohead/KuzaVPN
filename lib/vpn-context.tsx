@@ -39,7 +39,7 @@ export const VPNProvider = ({ children }: { children: ReactNode }) => {
   const [availableApps, setAvailableApps] = useState<AppInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [bandwidthStats, setBandwidthStats] = useState<BandwidthStats | null>(null);
-  const [bandwidthLimit] = useState(1040 * 1024 * 1024); // 1040 MB converted to bytes
+  const [bandwidthLimit] = useState(1.5 * 1024 * 1024 * 1024); // 1.5 GB converted to bytes
   const [vpnConfig, setVPNConfigState] = useState<VPNConfig | null>(DEFAULT_VPN_CONFIG);
   const [selectionMode, setSelectionMode] = useState<'encrypt-all' | 'custom'>('encrypt-all');
 
@@ -116,7 +116,7 @@ export const VPNProvider = ({ children }: { children: ReactNode }) => {
       console.log('✅ VPN permission granted');
 
       // Prepare app list for native module
-      const appsToConnect = selectionMode === 'encrypt-all' 
+      const appsToConnect = selectionMode === 'encrypt-all'
         ? [] // Empty array means all traffic goes through VPN
         : selectedApps;
 
@@ -133,10 +133,10 @@ export const VPNProvider = ({ children }: { children: ReactNode }) => {
         setVpnStatus('connected');
         console.log('✅ VPN Connected to WireGuard server:', vpnConfig.serverEndpoint);
         console.log('📱 Apps routing through VPN:', appsToConnect.length === 0 ? 'ALL APPS' : appsToConnect.map(app => app.appName));
-        
+
         // Force immediate status check after connection
         setTimeout(checkVPNStatus, 1000);
-        
+
         // Start bandwidth monitoring
         refreshBandwidthStatsLocal();
       } else {
@@ -147,7 +147,7 @@ export const VPNProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('❌ Failed to connect VPN:', error);
       setVpnStatus('disconnected');
-      
+
       // Show user-friendly error message
       if (error instanceof Error) {
         console.error('Error details:', error.message);

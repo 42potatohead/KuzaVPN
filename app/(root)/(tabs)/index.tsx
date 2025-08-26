@@ -18,20 +18,23 @@ export default function Home() {
 
   const [isEncryptAll, setIsEncryptAll] = useState(true);
 
-  // Helper function to format bandwidth
-  const formatBandwidth = (bytes: number): string => {
-    if (bytes === 0) return '0';
+  // Helper function to format bandwidth with unit
+  const formatBandwidth = (bytes: number): { value: string, unit: string } => {
+    if (bytes === 0) return { value: '0', unit: 'B' };
 
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)).toString();
+    const value = parseFloat((bytes / Math.pow(k, i)).toFixed(2)).toString();
+    const unit = sizes[i] || 'GB';
+
+    return { value, unit };
   };
 
   // Get current bandwidth usage
   const getCurrentBandwidth = () => {
-    if (!bandwidthStats) return '0';
+    if (!bandwidthStats) return { value: '0', unit: 'B' };
     return formatBandwidth(bandwidthStats.totalBytes);
   };
 
@@ -102,8 +105,7 @@ export default function Home() {
         <View className="mx-6 mb-6 bg-white rounded-2xl p-6 shadow-md">
           <Text className="text-gray-500 text-center mb-2">Used Bandwidth</Text>
           <Text className="text-3xl font-light text-center text-gray-400">
-            {getCurrentBandwidth()}/{getBandwidthLimit()}
-            <Text className="text-sm"> MB</Text>
+            {getCurrentBandwidth().value} {getCurrentBandwidth().unit} / {getBandwidthLimit().value} {getBandwidthLimit().unit}
           </Text>
         </View>
 

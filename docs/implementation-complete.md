@@ -70,11 +70,11 @@ While the VPN infrastructure is complete, to get **full WireGuard encryption**:
 
 ### 🎯 **Bottom Line:**
 
-**YES - Your app now establishes real VPN connections!** 
+**YES - Your app now establishes real VPN connections!**
 
 The infrastructure is complete with:
 - ✅ Real VPN tunnel creation
-- ✅ Per-app traffic routing  
+- ✅ Per-app traffic routing
 - ✅ Your actual WireGuard server integration
 - ✅ Proper Android VPN service
 
@@ -83,7 +83,7 @@ The app will create VPN interfaces, route app traffic, and connect to your serve
 ### 🏃‍♂️ **Ready to Test:**
 
 1. Build completed successfully ✅
-2. App installing on device ✅  
+2. App installing on device ✅
 3. Native VPN modules integrated ✅
 4. Your server configuration loaded ✅
 

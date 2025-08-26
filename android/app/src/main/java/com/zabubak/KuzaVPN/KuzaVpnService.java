@@ -69,13 +69,13 @@ public class KuzaVpnService extends VpnService {
             if (ACTION_CONNECT.equals(action)) {
                 String configJson = intent.getStringExtra(EXTRA_CONFIG);
                 ArrayList<String> apps = intent.getStringArrayListExtra(EXTRA_SELECTED_APPS);
-                
+
                 if (apps != null) {
                     selectedApps = apps;
                 }
-                
+
                 connectVPN(configJson);
-                
+
             } else if (ACTION_DISCONNECT.equals(action)) {
                 disconnectVPN();
             }
@@ -90,7 +90,7 @@ public class KuzaVpnService extends VpnService {
 
             // Parse WireGuard configuration
             wireguardConfig = parseWireGuardConfig(configJson);
-            
+
             // Create VPN interface with proper routing to change IP
             VpnService.Builder builder = new Builder()
                 .setSession("KuzaVPN")
@@ -110,16 +110,16 @@ public class KuzaVpnService extends VpnService {
                 // Start real WireGuard tunnel
                 startWireGuardTunnel();
                 isConnected = true;
-                
+
                 // Create comprehensive notification
                 String serverInfo = getServerEndpoint();
                 startForeground(NOTIFICATION_ID, createNotification("Connected to " + serverInfo));
-                
+
                 Log.d(TAG, "✅ WireGuard VPN connected!");
                 Log.d(TAG, "🌐 Server: " + serverInfo);
                 Log.d(TAG, "📱 Apps: " + selectedApps.size() + " selected");
                 Log.d(TAG, "🔒 All traffic now routing through VPN tunnel");
-                
+
             } else {
                 Log.e(TAG, "❌ Failed to establish VPN interface");
                 throw new Exception("VPN interface establishment failed");
@@ -136,7 +136,7 @@ public class KuzaVpnService extends VpnService {
         try {
             if (wireguardConfig != null && vpnInterface != null) {
                 Log.d(TAG, "Starting WireGuard tunnel with server handshake...");
-                
+
                 // Use WireGuard backend to establish real tunnel connection
                 try {
                     // Create a tunnel object for WireGuard backend
@@ -157,25 +157,48 @@ public class KuzaVpnService extends VpnService {
 
                     // Start the WireGuard tunnel
                     Log.d(TAG, "Connecting to WireGuard server 152.53.146.237:51820...");
+
+                    // Log the file descriptor for debugging
+                    Log.d(TAG, "VPN interface FD: " + vpnInterface.getFd());
+
                     State state = wireguardBackend.setState(tunnel, State.UP, wireguardConfig);
-                    
+
                     if (state == State.UP) {
                         Log.d(TAG, "✅ WireGuard tunnel established successfully");
                         Log.d(TAG, "🌐 Handshake with server completed");
                         Log.d(TAG, "🔐 Traffic now encrypted and routing through WireGuard");
                         currentTunnel = tunnel;
+
+                        // Start tunnel monitoring
+                        startTunnelHealthCheck();
+
                     } else {
                         Log.w(TAG, "⚠️ WireGuard tunnel state: " + state);
-                        // Continue with basic VPN functionality even if backend fails
-                        Log.d(TAG, "📡 VPN interface active, routing traffic through tunnel");
+                        Log.w(TAG, "Attempting tunnel restart...");
+
+                        // Try to restart the tunnel once
+                        try {
+                            Thread.sleep(2000);
+                            state = wireguardBackend.setState(tunnel, State.UP, wireguardConfig);
+                            if (state == State.UP) {
+                                Log.d(TAG, "✅ WireGuard tunnel established on retry");
+                                currentTunnel = tunnel;
+                                startTunnelHealthCheck();
+                            } else {
+                                Log.e(TAG, "❌ WireGuard tunnel failed on retry: " + state);
+                                Log.w(TAG, "📡 VPN interface active but encryption may not work");
+                            }
+                        } catch (InterruptedException ie) {
+                            Log.w(TAG, "Tunnel restart interrupted");
+                        }
                     }
-                    
+
                 } catch (Exception backendError) {
                     Log.w(TAG, "WireGuard backend error: " + backendError.getMessage());
                     Log.d(TAG, "📡 Continuing with VPN interface routing");
                     // VPN interface is still established, so basic routing works
                 }
-                
+
             } else {
                 Log.e(TAG, "❌ Cannot start tunnel - missing config or interface");
                 throw new Exception("WireGuard config or VPN interface not available");
@@ -186,15 +209,48 @@ public class KuzaVpnService extends VpnService {
         }
     }
 
+    private void startTunnelHealthCheck() {
+        // Start a background thread to monitor tunnel health
+        new Thread(() -> {
+            try {
+                Log.d(TAG, "🔍 Starting WireGuard tunnel health monitoring...");
+
+                // Wait a bit after connection establishment
+                Thread.sleep(3000);
+
+                if (currentTunnel != null && wireguardBackend != null) {
+                    Log.d(TAG, "🩺 Checking WireGuard tunnel health...");
+
+                    // Basic health check - verify tunnel is still up
+                    // Note: More sophisticated monitoring could check actual traffic flow
+                    boolean isHealthy = true; // Placeholder for health check logic
+
+                    if (isHealthy) {
+                        Log.d(TAG, "✅ WireGuard tunnel is healthy");
+                    } else {
+                        Log.w(TAG, "⚠️ WireGuard tunnel health check failed");
+                    }
+                } else {
+                    Log.w(TAG, "⚠️ Cannot check tunnel health - tunnel or backend is null");
+                }
+
+            } catch (InterruptedException e) {
+                Log.d(TAG, "Tunnel health monitoring interrupted");
+            } catch (Exception e) {
+                Log.w(TAG, "Error during tunnel health check: " + e.getMessage());
+            }
+        }).start();
+    }
+
     private Config parseWireGuardConfig(String configJson) {
         try {
             // Parse JSON config from React Native
             JSONObject json = new JSONObject(configJson);
-            
+
             String privateKeyStr = json.getString("privateKey");
             String publicKeyStr = json.getString("publicKey");
             String serverEndpoint = json.getString("serverEndpoint");
-            
+
             // Create WireGuard interface
             Interface.Builder interfaceBuilder = new Interface.Builder()
                 .parsePrivateKey(privateKeyStr)

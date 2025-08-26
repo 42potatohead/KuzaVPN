@@ -5,7 +5,7 @@
 ### ✅ **What We Fixed:**
 
 1. **Native Module Registration** - Added proper import and registration in MainApplication.kt
-2. **Real VPN Status Checking** - Added service status monitoring  
+2. **Real VPN Status Checking** - Added service status monitoring
 3. **Enhanced VPN Routing** - Improved traffic routing configuration
 4. **UI Status Updates** - More frequent status checking (every 1 second)
 5. **Better Error Handling** - Enhanced logging and error messages
@@ -18,7 +18,7 @@
 
 #### **Step 2: Test VPN Connection**
 1. Open the app
-2. Tap "Connect" 
+2. Tap "Connect"
 3. Grant VPN permission when prompted
 4. Watch for these logs:
    ```
@@ -34,7 +34,7 @@
 4. **Your IP should now show a different location** (likely from your VPN server region)
 
 #### **Step 4: UI Status Check**
-- Connect button should change to "Disconnect" 
+- Connect button should change to "Disconnect"
 - Status should show "Connected"
 - Connection indicator should turn green
 
@@ -97,7 +97,7 @@ ip addr show tun0
 
 The ultimate test is:
 1. Note your current IP and location
-2. Connect VPN in the app  
+2. Connect VPN in the app
 3. Visit an IP checking website
 4. **Your IP should now be different and show the VPN server's location**
 

@@ -5,7 +5,7 @@
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-  
+
   <!-- VPN permissions for KuzaVPN -->
   <uses-permission android:name="android.permission.BIND_VPN_SERVICE" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,7 +13,7 @@
   <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-  <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" 
+  <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
       tools:ignore="QueryAllPackagesPermission" />
   <queries>
     <intent>
@@ -38,9 +38,9 @@
         <data android:scheme="datetime"/>
       </intent-filter>
     </activity>
-    
+
     <!-- KuzaVPN Service -->
-    <service 
+    <service
         android:name=".KuzaVpnService"
         android:permission="android.permission.BIND_VPN_SERVICE"
         android:exported="false">
@@ -48,6 +48,6 @@
         <action android:name="android.net.VpnService" />
       </intent-filter>
     </service>
-    
+
   </application>
 </manifest>

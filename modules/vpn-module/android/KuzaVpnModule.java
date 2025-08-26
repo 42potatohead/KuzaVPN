@@ -21,7 +21,10 @@ import com.kuzavpn.vpnmodule.InstalledAppsHelper;
 import com.kuzavpn.vpnmodule.KuzaVpnService;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.net.TrafficStats;
 import android.net.VpnService;
 import android.util.Log;
 
@@ -119,9 +122,30 @@ public class KuzaVpnModule extends ReactContextBaseJavaModule {
 
             reactContext.startService(serviceIntent);
 
-            // TODO: Wait for service to confirm connection
-            // For now, assume success
-            promise.resolve(true);
+            // Wait for service to confirm connection with timeout
+            new Thread(() -> {
+                try {
+                    // Wait up to 10 seconds for connection confirmation
+                    int attempts = 0;
+                    boolean connected = false;
+
+                    while (attempts < 20 && !connected) { // 20 attempts * 500ms = 10 seconds
+                        Thread.sleep(500);
+                        connected = isVpnServiceRunning();
+                        attempts++;
+                    }
+
+                    if (connected) {
+                        promise.resolve(true);
+                        Log.d(TAG, "✅ VPN service confirmed connected");
+                    } else {
+                        promise.reject("TIMEOUT_ERROR", "VPN service failed to start within timeout");
+                        Log.e(TAG, "❌ VPN service connection timeout");
+                    }
+                } catch (InterruptedException e) {
+                    promise.reject("INTERRUPTED_ERROR", "Connection wait interrupted");
+                }
+            }).start();
 
             Log.d(TAG, "VPN start initiated with " + appPackages.size() + " apps");
 
@@ -156,9 +180,19 @@ public class KuzaVpnModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getVPNStatus(Promise promise) {
         try {
-            // TODO: Implement actual status checking
-            // For now, return mock status
-            promise.resolve("disconnected");
+            // Implement actual status checking
+            boolean isRunning = isVpnServiceRunning();
+
+            WritableMap result = Arguments.createMap();
+            result.putString("status", isRunning ? "connected" : "disconnected");
+            result.putBoolean("isConnected", isRunning);
+
+            if (isRunning) {
+                result.putString("server", "152.53.146.237:51820");
+                result.putString("protocol", "WireGuard");
+            }
+
+            promise.resolve(result);
 
         } catch (Exception e) {
             Log.e(TAG, "Failed to get VPN status", e);
@@ -217,15 +251,28 @@ public class KuzaVpnModule extends ReactContextBaseJavaModule {
 
     /**
      * Get bandwidth usage statistics
-     * TODO: Implement actual bandwidth monitoring
+     * Implements actual bandwidth monitoring using TrafficStats
      */
     @ReactMethod
     public void getBandwidthStats(Promise promise) {
         try {
+            // Implement actual bandwidth monitoring using TrafficStats
             WritableMap stats = Arguments.createMap();
-            stats.putDouble("bytesReceived", 0);
-            stats.putDouble("bytesSent", 0);
-            stats.putDouble("totalBytes", 0);
+
+            // Get system-wide traffic statistics
+            long mobileRx = TrafficStats.getMobileRxBytes();
+            long mobileTx = TrafficStats.getMobileTxBytes();
+            long totalRx = TrafficStats.getTotalRxBytes();
+            long totalTx = TrafficStats.getTotalTxBytes();
+
+            // Calculate totals
+            long totalMobile = mobileRx + mobileTx;
+
+            stats.putDouble("bytesReceived", mobileRx > 0 ? mobileRx : 0);
+            stats.putDouble("bytesSent", mobileTx > 0 ? mobileTx : 0);
+            stats.putDouble("totalBytes", totalMobile > 0 ? totalMobile : 0);
+            stats.putDouble("totalSystemRx", totalRx);
+            stats.putDouble("totalSystemTx", totalTx);
             stats.putString("lastUpdated", String.valueOf(System.currentTimeMillis()));
 
             promise.resolve(stats);
@@ -259,5 +306,22 @@ public class KuzaVpnModule extends ReactContextBaseJavaModule {
         }
 
         return writableArray;
+    }
+
+    /**
+     * Helper method to check if VPN service is running
+     */
+    private boolean isVpnServiceRunning() {
+        try {
+            ActivityManager manager = (ActivityManager) reactContext.getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (KuzaVpnService.class.getName().equals(service.service.getClassName())) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to check service status", e);
+        }
+        return false;
     }
 }
