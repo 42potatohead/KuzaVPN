@@ -61,7 +61,7 @@ public class KuzaVpnModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return "KuzaVpnModule";
+        return "KuzaVPN";  // Changed from "KuzaVpnModule" to match React Native imports
     }
 
     @Override

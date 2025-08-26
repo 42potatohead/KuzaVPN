@@ -4,6 +4,8 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 34
     buildToolsVersion "34.0.0"
+    
+    namespace 'com.kuzavpn.vpnmodule'
 
     defaultConfig {
         minSdkVersion 21
@@ -59,5 +61,5 @@ project.ext.react = [
     enableHermes: false,
 ]
 
-// Auto-linking configuration
-apply from: "../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"; applyNativeModulesAppBuildGradle(project)
+// Note: Auto-linking is handled by the main app, not the module
+// apply from: "../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"; applyNativeModulesAppBuildGradle(project)

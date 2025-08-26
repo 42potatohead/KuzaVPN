@@ -1,0 +1,91 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:2:1-46:12
+INJECTED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:2:1-46:12
+	package
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:4:5-36
+		INJECTED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml
+	xmlns:tools
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:3:5-51
+	xmlns:android
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.BIND_VPN_SERVICE
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:7:5-75
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:7:22-72
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:8:5-67
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:8:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:9:5-79
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:9:22-76
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:10:5-76
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:10:22-73
+uses-permission#android.permission.CHANGE_WIFI_STATE
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:11:5-76
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:11:22-73
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:12:5-77
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:12:22-74
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:13:5-77
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:13:22-74
+uses-permission#android.permission.QUERY_ALL_PACKAGES
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:16:5-17:53
+	tools:ignore
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:17:9-50
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:16:22-74
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:20:5-80
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:20:22-77
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:21:5-81
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:21:22-78
+application
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:23:5-44:19
+service#com.kuzavpn.vpnmodule.KuzaVpnService
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:25:9-33:19
+	android:exported
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:27:13-36
+	android:permission
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:28:13-69
+	android:foregroundServiceType
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:29:13-53
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:26:13-43
+intent-filter#action:name:android.net.VpnService
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:30:13-32:29
+action#android.net.VpnService
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:31:17-65
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:31:25-62
+meta-data#com.kuzavpn.notification.channel
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:36:9-38:48
+	android:value
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:38:13-45
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:37:13-60
+meta-data#com.wireguard.config.backend
+ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:41:9-43:38
+	android:value
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:43:13-35
+	android:name
+		ADDED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml:42:13-56
+uses-sdk
+INJECTED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml
+INJECTED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\zaid-\Documents\VPN\KuzaVPN\modules\vpn-module\android\src\main\AndroidManifest.xml
