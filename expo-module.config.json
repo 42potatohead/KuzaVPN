@@ -13,7 +13,7 @@
     "modules": [
       {
         "name": "KuzaVpnModule",
-        "path": "./modules/vpn-module/android"
+        "path": "./android/app/src/main/java/com/zabubak/KuzaVPN"
       }
     ]
   }
